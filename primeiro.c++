@@ -29,8 +29,8 @@ struct Produto {
 void imprimirCabecalho() {
     cout << left << setw(10) << "Item"
          << setw(25) << "Nome"
-         << setw(15) << "Preco Compra"
-         << setw(15) << "Preco Venda"
+         << setw(15) << "Preço Compra"
+         << setw(15) << "Preço Venda"
          << setw(10) << "Stock"
          << setw(20) << "Quant. Comprada"
          << setw(15) << "Lucro"
@@ -44,7 +44,7 @@ int main() {
         {1, "Mochila", 15.00, 25.00, 50, 4}, 
         {2, "Calculadora cientifica", 10.00, 20.00, 100, 20}, 
         {3, "Estojos completos", 8.00, 15.00, 80, 5}, 
-        {4, "Dicionarios", 20.00, 35.00, 30, 4}, 
+        {4, "Dicionários", 20.00, 35.00, 30, 4}, 
         {5, "Computadores", 300.00, 450.00, 10, 50} 
     };
 
