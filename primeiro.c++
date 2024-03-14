@@ -1,120 +1,170 @@
- #include <iostream>
-#include <iomanip>
-#include <string>
+#include <iostream>
 #include <vector>
-#include <limits> // Para std::numeric_limits
+#include <string>
+#include <limits>
 
-using namespace std;
-
+// Definição da estrutura Produto
 struct Produto {
-    string nome;
-    float precoCompra;
-    float precoVenda;
+    std::string nome;
+    double precoCompra;
+    double precoVenda;
     int estoque;
-    int quantidadeComprada;
-
-    float calcularLucro() const {
-        return (precoVenda - precoCompra) * quantidadeComprada;
-    }
-
-    float valorTotalVendas() const {
-        return precoVenda * quantidadeComprada;
-    }
-
-    int totalProdutosEstoque() const {
-        return estoque;
-    }
 };
 
-void imprimirDetalhesProduto(const Produto& produto) {
-    cout << "\nResumo para: " << produto.nome << endl;
-    cout << left 
-         << setw(25) << "Nome"
-         << setw(15) << "Preço Compra"
-         << setw(15) << "Preço Venda"
-         << setw(10) << "Estoque"
-         << setw(18) << "Qtd. Comprada"
-         << setw(15) << "Lucro Total"
-         << setw(20) << "Valor Vendas Total" << endl;
-    cout << string(118, '-') << endl;
-    cout << left 
-         << setw(25) << produto.nome
-         << setw(15) << produto.precoCompra
-         << setw(15) << produto.precoVenda
-         << setw(10) << produto.estoque
-         << setw(18) << produto.quantidadeComprada
-         << setw(15) << produto.calcularLucro()
-         << setw(20) << produto.valorTotalVendas() << endl;
-}
+// Variável global para armazenar o total de vendas
+double totalVendas = 0.0;
 
-void imprimirResumoGeral(const vector<Produto>& produtos) {
-    cout << "\nResumo Geral de Todos os Produtos\n";
-    cout << left 
-         << setw(25) << "Nome"
-         << setw(15) << "Lucro Total"
-         << setw(20) << "Valor Vendas Total" << endl;
-    cout << string(60, '-') << endl;
-    for (const auto& produto : produtos) {
-        cout << left 
-             << setw(25) << produto.nome
-             << setw(15) << produto.calcularLucro()
-             << setw(20) << produto.valorTotalVendas() << endl;
+// Função para atualizar o estoque de um produto
+void atualizarEstoque(std::vector<Produto>& produtos) {
+    int numeroProduto;
+    int quantidade;
+
+    std::cout << "Produtos disponíveis:\n";
+    for (size_t i = 0; i < produtos.size(); ++i) {
+        std::cout << i + 1 << ". " << produtos[i].nome << "\n";
+    }
+    std::cout << produtos.size() + 1 << ". Adicionar mais produtos\n";
+
+    std::cout << "Digite o número do produto para atualizar o estoque ou adicionar mais produtos: ";
+    std::cin >> numeroProduto;
+
+    if (numeroProduto >= 1 && numeroProduto <= produtos.size()) {
+        std::cout << "Digite a quantidade a ser adicionada ao estoque: ";
+        std::cin >> quantidade;
+        produtos[numeroProduto - 1].estoque += quantidade;
+        std::cout << "Estoque atualizado.\n";
+    } else if (numeroProduto == produtos.size() + 1) {
+        Produto novoProduto;
+        std::cout << "Digite o nome do novo produto: ";
+        std::cin >> novoProduto.nome;
+        std::cout << "Digite o preço de compra do novo produto: ";
+        std::cin >> novoProduto.precoCompra;
+        std::cout << "Digite o preço de venda do novo produto: ";
+        std::cin >> novoProduto.precoVenda;
+        std::cout << "Digite o estoque inicial do novo produto: ";
+        std::cin >> novoProduto.estoque;
+        produtos.push_back(novoProduto);
+        std::cout << "Produto adicionado.\n";
+    } else {
+        std::cout << "Número do produto inválido.\n";
     }
 }
 
-void pausa() {
-    cout << "\nPressione Enter para continuar...";
-    cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignora el resto del buffer de entrada
-    cin.get(); // Espera a que el usuario presione Enter
+// Função para realizar uma venda
+void realizarVenda(std::vector<Produto>& produtos) {
+    int numeroProduto;
+    int quantidade;
+    double totalVenda = 0.0;
+    bool continuarComprando = true;
+    char resposta;
+
+    while (continuarComprando) {
+        std::cout << "Produtos disponíveis:\n";
+        for (size_t i = 0; i < produtos.size(); ++i) {
+            std::cout << i + 1 << ". " << produtos[i].nome << " - Em estoque: " << produtos[i].estoque << "\n";
+        }
+
+        std::cout << "Digite o número do produto para realizar uma venda: ";
+        std::cin >> numeroProduto;
+
+        if (numeroProduto < 1 || numeroProduto > produtos.size()) {
+            std::cout << "Número do produto inválido. Por favor, tente novamente.\n";
+            continue;
+        }
+
+        std::cout << "Digite a quantidade a vender: ";
+        std::cin >> quantidade;
+
+        if (quantidade > produtos[numeroProduto - 1].estoque) {
+            std::cout << "Não há estoque suficiente para este produto. Por favor, tente com uma quantidade menor.\n";
+            continue;
+        }
+
+        double totalProduto = quantidade * produtos[numeroProduto - 1].precoVenda;
+        totalVenda += totalProduto;
+        produtos[numeroProduto - 1].estoque -= quantidade;
+        std::cout << "Produto vendido. Total parcial: " << totalVenda << "\n";
+
+        std::cout << "Deseja adicionar outro produto à compra? (S/N): ";
+        std::cin >> resposta;
+        continuarComprando = (resposta == 'S' || resposta == 's');
+    }
+
+    std::cout << "Total a pagar: " << totalVenda << "\n";
+    totalVendas += totalVenda; // Atualiza o total de vendas
+
+    double dinheiroRecebido;
+    std::cout << "Digite o dinheiro recebido: ";
+    std::cin >> dinheiroRecebido;
+
+    if (dinheiroRecebido >= totalVenda) {
+        double troco = dinheiroRecebido - totalVenda;
+        std::cout << "Troco: " << troco << "\n";
+    } else {
+        std::cout << "Dinheiro insuficiente. Transação cancelada.\n";
+        // Caso a transação seja cancelada, você poderia querer devolver os produtos ao estoque.
+    }
+}
+
+// Função para mostrar o resumo
+void resumo(const std::vector<Produto>& produtos) {
+    double custoTotalEstoque = 0.0;
+    double vendasTotaisEstimadas = 0.0;
+
+    std::cout << "Resumo:\n";
+    for (size_t i = 0; i < produtos.size(); ++i) {
+        const Produto& produto = produtos[i];
+        std::cout << "Produto " << i + 1 << ": " << produto.nome << "\n";
+        std::cout << "Preço de compra: " << produto.precoCompra << "\n";
+        std::cout << "Preço de venda: " << produto.precoVenda << "\n";
+        std::cout << "Estoque: " << produto.estoque << "\n";
+        double lucroPorProduto = (produto.precoVenda - produto.precoCompra) * produto.estoque;
+        std::cout << "Lucro por produto: " << lucroPorProduto << "\n";
+        custoTotalEstoque += produto.precoCompra * produto.estoque;
+        vendasTotaisEstimadas += produto.precoVenda * produto.estoque;
+        std::cout << "-----------------------------\n";
+    }
+
+    std::cout << "Custo total do estoque: " << custoTotalEstoque << "\n";
+    std::cout << "Vendas totais estimadas (se tudo fosse vendido pelo preço atual): " << vendasTotaisEstimadas << "\n";
+    std::cout << "Total de vendas realizadas: " << totalVendas << "\n";
 }
 
 int main() {
-    vector<Produto> produtos = {
-        {"Mochila"},
-        {"Calculadora científica"},
-        {"Estojos completos"},
-        {"Dicionários"},
-        {"Computadores"}
+    std::vector<Produto> produtos = {
+        {"Mochila", 15.00, 25.00, 200},
+        {"Calculadora científica", 10.00, 20.00, 200},
+        {"Estojo completo", 8.00, 15.00, 200},
+        {"Dicionários", 20.00, 35.00, 200},
+        {"Computadores", 300.00, 450.00, 200}
     };
 
     int opcao;
-    for (;;) {
-        cout << "\nEscolha um produto:\n";
-        for (size_t i = 0; i < produtos.size(); ++i) {
-            cout << i + 1 << ". " << produtos[i].nome << endl;
+    do {
+        std::cout << "1. Atualizar estoque\n";
+        std::cout << "2. Realizar venda\n";
+        std::cout << "3. Mostrar resumo\n";
+        std::cout << "4. Sair\n";
+        std::cout << "Digite uma opção: ";
+        std::cin >> opcao;
+
+        switch (opcao) {
+            case 1:
+                atualizarEstoque(produtos);
+                break;
+            case 2:
+                realizarVenda(produtos);
+                break;
+            case 3:
+                resumo(produtos);
+                break;
+            case 4:
+                std::cout << "Saindo...\n";
+                break;
+            default:
+                std::cout << "Opção inválida. Por favor, tente novamente.\n";
         }
-        cout << "0. Sair\n";
-        cout << "Opção: ";
-        cin >> opcao;
-        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Limpia el buffer después de leer un entero
-
-        if (opcao == 0) {
-            break; // Salir del bucle si se elige la opción 0
-        } else if (opcao >= 1 && opcao <= static_cast<int>(produtos.size())) {
-            Produto& produto = produtos[opcao - 1];
-
-            cout << "Insira os dados para: " << produto.nome << endl;
-            cout << "Preço de compra: ";
-            cin >> produto.precoCompra;
-            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Limpia el buffer
-            cout << "Preço de venda: ";
-            cin >> produto.precoVenda;
-            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Limpia el buffer
-            cout << "Quantidade comprada: ";
-            cin >> produto.quantidadeComprada;
-            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Limpia el buffer
-            cout << "Estoque: ";
-            cin >> produto.estoque;
-            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Limpia el buffer después de leer un entero
-
-            imprimirDetalhesProduto(produto);
-            pausa(); // Pausa después de cada resumen de producto
-        } else {
-            cout << "Opção inválida. Por favor, escolha uma opção válida.\n";
-        }
-    }
-
-    imprimirResumoGeral(produtos);
+    } while (opcao != 4);
 
     return 0;
 }
