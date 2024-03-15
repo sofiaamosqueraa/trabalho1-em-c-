@@ -1,4 +1,4 @@
-#include <iostream> //entrada e saida dedos
+#include <iostream> //entrada e saida dados
 #include <vector> //vetores (arrays dinâmicos)
 #include <string> //manipulação de strings
 #include <limits> // limites numéricos
