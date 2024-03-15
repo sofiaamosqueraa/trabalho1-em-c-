@@ -166,7 +166,7 @@ int main() {
                 resumo(produtos);
                 break;
             case 4:
-                std::cout << "Saindo...\n";
+                std::cout << "Volte sempre com mais dinheiro <3\n";
                 break;
             default:
                 std::cout << "Opção inválida. Por favor, tente novamente.\n";
