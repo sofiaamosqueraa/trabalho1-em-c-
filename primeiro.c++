@@ -13,7 +13,11 @@ struct Produto {
 // Variável global para armazenar o total de vendas
 double totalVendas = 0.0;
 
-// atualizar o estoque 
+void limpiarBuffer() {
+    std::cin.clear(); // Limpiar errores de cin
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Descartar cualquier entrada pendiente 
+}
+
 void atualizarEstoque(std::vector<Produto>& produtos) {
     int numeroProduto;
     int quantidade;
@@ -26,10 +30,10 @@ void atualizarEstoque(std::vector<Produto>& produtos) {
     std::cout << "Digite o número do produto para atualizar o estoque ou adicionar mais produtos: ";
     std::cin >> numeroProduto;
 
-   
     if (numeroProduto >= 1 && numeroProduto <= produtos.size()) {
         std::cout << "Digite a quantidade a ser adicionada ao estoque: ";
         std::cin >> quantidade;
+        limpiarBuffer(); 
         produtos[numeroProduto - 1].estoque += quantidade;
         std::cout << "Estoque atualizado.\n";
     } else if (numeroProduto == produtos.size() + 1) {
@@ -38,16 +42,20 @@ void atualizarEstoque(std::vector<Produto>& produtos) {
         std::cin >> novoProduto.nome;
         std::cout << "Digite o preço de compra do novo produto: ";
         std::cin >> novoProduto.precoCompra;
+        limpiarBuffer(); 
         std::cout << "Digite o preço de venda do novo produto: ";
         std::cin >> novoProduto.precoVenda;
+        limpiarBuffer(); 
         std::cout << "Digite o estoque inicial do novo produto: ";
         std::cin >> novoProduto.estoque;
+        limpiarBuffer(); 
         produtos.push_back(novoProduto);
         std::cout << "Produto adicionado.\n";
     } else {
         std::cout << "Número do produto inválido.\n";
     }
 }
+
 
 // realizar uma venda
 void realizarVenda(std::vector<Produto>& produtos) {
