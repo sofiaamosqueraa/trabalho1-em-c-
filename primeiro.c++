@@ -1,9 +1,8 @@
-#include <iostream>
-#include <vector>
-#include <string>
-#include <limits>
-
-// Definição da estrutura Produto
+#include <iostream> //entrada e saida dedos
+#include <vector> //vetores (arrays dinâmicos)
+#include <string> //manipulação de strings
+#include <limits> // limites numéricos
+// estrutura 
 struct Produto {
     std::string nome;
     double precoCompra;
@@ -14,11 +13,10 @@ struct Produto {
 // Variável global para armazenar o total de vendas
 double totalVendas = 0.0;
 
-// Função para atualizar o estoque de um produto
+// atualizar o estoque 
 void atualizarEstoque(std::vector<Produto>& produtos) {
     int numeroProduto;
     int quantidade;
-
     std::cout << "Produtos disponíveis:\n";
     for (size_t i = 0; i < produtos.size(); ++i) {
         std::cout << i + 1 << ". " << produtos[i].nome << "\n";
@@ -28,6 +26,7 @@ void atualizarEstoque(std::vector<Produto>& produtos) {
     std::cout << "Digite o número do produto para atualizar o estoque ou adicionar mais produtos: ";
     std::cin >> numeroProduto;
 
+   
     if (numeroProduto >= 1 && numeroProduto <= produtos.size()) {
         std::cout << "Digite a quantidade a ser adicionada ao estoque: ";
         std::cin >> quantidade;
@@ -50,7 +49,7 @@ void atualizarEstoque(std::vector<Produto>& produtos) {
     }
 }
 
-// Função para realizar uma venda
+// realizar uma venda
 void realizarVenda(std::vector<Produto>& produtos) {
     int numeroProduto;
     int quantidade;
@@ -68,7 +67,7 @@ void realizarVenda(std::vector<Produto>& produtos) {
         std::cin >> numeroProduto;
 
         if (numeroProduto < 1 || numeroProduto > produtos.size()) {
-            std::cout << "Número do produto inválido. Por favor, tente novamente.\n";
+            std::cout << "  . Por favor, tente novamente.\n";
             continue;
         }
 
@@ -102,11 +101,11 @@ void realizarVenda(std::vector<Produto>& produtos) {
         std::cout << "Troco: " << troco << "\n";
     } else {
         std::cout << "Dinheiro insuficiente. Transação cancelada.\n";
-        // Caso a transação seja cancelada, você poderia querer devolver os produtos ao estoque.
+        // transação seja cancelada = devolver os produtos ao estoque.
     }
 }
 
-// Função para mostrar o resumo
+//  resumo
 void resumo(const std::vector<Produto>& produtos) {
     double custoTotalEstoque = 0.0;
     double vendasTotaisEstimadas = 0.0;
