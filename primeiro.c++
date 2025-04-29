@@ -1,8 +1,8 @@
-#include <iostream> //entrada e saida dados
-#include <vector> //vetores (arrays dinâmicos)
-#include <string> //manipulação de strings
-#include <limits> // limites numéricos
-// estrutura 
+#include <iostream>
+#include <vector>
+#include <string>
+#include <limits>
+
 struct Produto {
     std::string nome;
     double precoCompra;
@@ -10,17 +10,17 @@ struct Produto {
     int estoque;
 };
 
-// Variável global para armazenar o total de vendas
 double totalVendas = 0.0;
 
 void limpiarBuffer() {
-    std::cin.clear(); // Limpiar errores de cin
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Descartar cualquier entrada pendiente 
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
 void atualizarEstoque(std::vector<Produto>& produtos) {
     int numeroProduto;
     int quantidade;
+
     std::cout << "Produtos disponíveis:\n";
     for (size_t i = 0; i < produtos.size(); ++i) {
         std::cout << i + 1 << ". " << produtos[i].nome << "\n";
@@ -29,26 +29,53 @@ void atualizarEstoque(std::vector<Produto>& produtos) {
 
     std::cout << "Digite o número do produto para atualizar o estoque ou adicionar mais produtos: ";
     std::cin >> numeroProduto;
+    if (std::cin.fail()) {
+        limpiarBuffer();
+        std::cout << "Entrada inválida.\n";
+        return;
+    }
 
     if (numeroProduto >= 1 && numeroProduto <= produtos.size()) {
         std::cout << "Digite a quantidade a ser adicionada ao estoque: ";
         std::cin >> quantidade;
-        limpiarBuffer(); 
+        if (std::cin.fail()) {
+            limpiarBuffer();
+            std::cout << "Entrada inválida.\n";
+            return;
+        }
+        limpiarBuffer();
         produtos[numeroProduto - 1].estoque += quantidade;
         std::cout << "Estoque atualizado.\n";
     } else if (numeroProduto == produtos.size() + 1) {
         Produto novoProduto;
         std::cout << "Digite o nome do novo produto: ";
         std::cin >> novoProduto.nome;
+
         std::cout << "Digite o preço de compra do novo produto: ";
         std::cin >> novoProduto.precoCompra;
-        limpiarBuffer(); 
+        if (std::cin.fail()) {
+            limpiarBuffer();
+            std::cout << "Entrada inválida.\n";
+            return;
+        }
+
         std::cout << "Digite o preço de venda do novo produto: ";
         std::cin >> novoProduto.precoVenda;
-        limpiarBuffer(); 
+        if (std::cin.fail()) {
+            limpiarBuffer();
+            std::cout << "Entrada inválida.\n";
+            return;
+        }
+
         std::cout << "Digite o estoque inicial do novo produto: ";
         std::cin >> novoProduto.estoque;
-        limpiarBuffer(); 
+        if (std::cin.fail()) {
+            limpiarBuffer();
+            std::cout << "Entrada inválida.\n";
+            return;
+        }
+
+        limpiarBuffer();
         produtos.push_back(novoProduto);
         std::cout << "Produto adicionado.\n";
     } else {
@@ -56,8 +83,6 @@ void atualizarEstoque(std::vector<Produto>& produtos) {
     }
 }
 
-
-// realizar uma venda
 void realizarVenda(std::vector<Produto>& produtos) {
     int numeroProduto;
     int quantidade;
@@ -73,17 +98,27 @@ void realizarVenda(std::vector<Produto>& produtos) {
 
         std::cout << "Digite o número do produto para realizar uma venda: ";
         std::cin >> numeroProduto;
+        if (std::cin.fail()) {
+            limpiarBuffer();
+            std::cout << "Entrada inválida.\n";
+            continue;
+        }
 
         if (numeroProduto < 1 || numeroProduto > produtos.size()) {
-            std::cout << "  . Por favor, tente novamente.\n";
+            std::cout << "Número inválido. Por favor, tente novamente.\n";
             continue;
         }
 
         std::cout << "Digite a quantidade a vender: ";
         std::cin >> quantidade;
+        if (std::cin.fail()) {
+            limpiarBuffer();
+            std::cout << "Entrada inválida.\n";
+            continue;
+        }
 
         if (quantidade > produtos[numeroProduto - 1].estoque) {
-            std::cout << "Não há estoque suficiente para este produto. Por favor, tente com uma quantidade menor.\n";
+            std::cout << "Não há estoque suficiente. Tente uma quantidade menor.\n";
             continue;
         }
 
@@ -98,22 +133,26 @@ void realizarVenda(std::vector<Produto>& produtos) {
     }
 
     std::cout << "Total a pagar: " << totalVenda << "\n";
-    totalVendas += totalVenda; // Atualiza o total de vendas
+    totalVendas += totalVenda;
 
     double dinheiroRecebido;
     std::cout << "Digite o dinheiro recebido: ";
     std::cin >> dinheiroRecebido;
+    if (std::cin.fail()) {
+        limpiarBuffer();
+        std::cout << "Entrada inválida. Transação cancelada.\n";
+        return;
+    }
 
     if (dinheiroRecebido >= totalVenda) {
         double troco = dinheiroRecebido - totalVenda;
         std::cout << "Troco: " << troco << "\n";
     } else {
         std::cout << "Dinheiro insuficiente. Transação cancelada.\n";
-        // transação seja cancelada = devolver os produtos ao estoque.
+        // Poderias devolver ao estoque aqui, se necessário.
     }
 }
 
-//  resumo
 void resumo(const std::vector<Produto>& produtos) {
     double custoTotalEstoque = 0.0;
     double vendasTotaisEstimadas = 0.0;
@@ -133,7 +172,7 @@ void resumo(const std::vector<Produto>& produtos) {
     }
 
     std::cout << "Custo total do estoque: " << custoTotalEstoque << "\n";
-    std::cout << "Vendas totais estimadas (se tudo fosse vendido pelo preço atual): " << vendasTotaisEstimadas << "\n";
+    std::cout << "Vendas totais estimadas: " << vendasTotaisEstimadas << "\n";
     std::cout << "Total de vendas realizadas: " << totalVendas << "\n";
 }
 
@@ -148,12 +187,18 @@ int main() {
 
     int opcao;
     do {
-        std::cout << "1. Atualizar estoque\n";
+        std::cout << "\n1. Atualizar estoque\n";
         std::cout << "2. Realizar venda\n";
         std::cout << "3. Mostrar resumo\n";
         std::cout << "4. Sair\n";
         std::cout << "Digite uma opção: ";
         std::cin >> opcao;
+
+        if (std::cin.fail()) {
+            limpiarBuffer();
+            std::cout << "Entrada inválida. Por favor, digite um número.\n";
+            continue;
+        }
 
         switch (opcao) {
             case 1:
@@ -175,3 +220,6 @@ int main() {
 
     return 0;
 }
+// Compilação: g++ primeiro.c++ -o primeiro.exe
+// Execução: primeiro.exe
+// Teste: 1. Atualizar estoque, 2. Realizar venda, 3. Mostrar resumo, 4. Sair
